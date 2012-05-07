@@ -2,6 +2,8 @@ require 'net/http'
 
 module Fetcher
   class Base
+    attr_reader :message
+
     def initialize cue
       @last_request_status = false
     end
@@ -25,8 +27,10 @@ module Fetcher
 
       if "200" == response.code
         @last_request_status = true
+        @message = "Request succeeded"
       else
         @last_request_status = false
+        @message = "HTTP request failed for #{url}: #{response.message}"
       end
     end
   end
