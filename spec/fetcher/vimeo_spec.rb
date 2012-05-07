@@ -80,7 +80,20 @@ module Fetcher
         }
       end
 
-      it "sets the data about the most recent video to reader :data"
+      it "sets the data about the most recent video to reader :data" do
+        vimeo_test_channel.fetch
+        vimeo_test_channel.data.should == {
+          title:        "Video 2",
+          url:          "http://www.vimeo.com/2",
+          description:  "Yummy stuff",
+          date:         "2012-04-06 5:27:38",
+          user:         "John Smith",
+          number_likes: "8",
+          number_plays: "10",
+          duration:     "222",
+          tags:         "Cake, Pie, Food"
+        }
+      end
     end
   end
 end
