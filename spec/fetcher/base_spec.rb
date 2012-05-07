@@ -7,6 +7,16 @@ module Fetcher
 
     let(:base) { Base.new EMPTY_CUE }
 
+    describe "new object" do
+      it "should return false on #success?" do
+        base.success?.should == false
+      end
+
+      it "should return \"\" on #message" do
+        base.message.should be_empty
+      end
+    end
+
     describe "#success?" do
       it "returns the status of the last http request" do
         base.should_receive(:last_request_status)

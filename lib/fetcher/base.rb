@@ -6,6 +6,7 @@ module Fetcher
 
     def initialize cue
       @last_request_status = false
+      @message = ""
     end
 
     def success?
