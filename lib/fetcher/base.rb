@@ -1,3 +1,5 @@
+require 'net/http'
+
 module Fetcher
   class Base
     def initialize cue
@@ -14,6 +16,10 @@ module Fetcher
     private
 
     def last_request_status
+    end
+
+    def http_request url, options = {}
+      response = Net::HTTP.get_response URI url
     end
   end
 end
