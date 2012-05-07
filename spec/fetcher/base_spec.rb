@@ -2,8 +2,13 @@ require 'spec_helper'
 
 module Fetcher
   describe Base do
-    EMPTY_CUE = []
-    ANY_VALID_URL = "http://www.bing.com"
+    EMPTY_CUE                  = []
+    ANY_VALID_URL              = "http://www.bing.com"
+    HTTP_OK                    = ["200", "OK"]
+    HTTP_BAD_REQUEST           = ["400", "Bad Request"]
+    HTTP_FORBIDDEN             = ["403", "Forbidden"]
+    HTTP_INTERNAL_SERVER_ERROR = ["500", "Internal Server Error"]
+
     Response = Struct.new :code, :message, :body
 
     let(:base) { Base.new EMPTY_CUE }
@@ -53,7 +58,7 @@ module Fetcher
 
       it "should cause #success? to be true on a HTTP OK response" do
         Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-          and_return Response.new "200", "OK"
+          and_return Response.new *HTTP_OK
 
         base.send :http_request, ANY_VALID_URL
         base.success?.should be_true
@@ -61,14 +66,14 @@ module Fetcher
 
       describe "#message" do
         [
-          ["200", "OK", "Request succeeded"],
-          ["400", "Bad Request", "HTTP request failed for #{ANY_VALID_URL}: 'Bad Request'"],
-          ["403", "Forbidden", "HTTP request failed for #{ANY_VALID_URL}: 'Forbidden'"],
-          ["500", "Internal Server Error", "HTTP request failed for #{ANY_VALID_URL}: 'Internal Server Error'"]
-        ].each do |status, message, expected|
-          it "returns #{expected} on a HTTP #{status} response" do
+          [HTTP_OK, "Request succeeded"],
+          [HTTP_BAD_REQUEST, "HTTP request failed for #{ANY_VALID_URL}: 'Bad Request'"],
+          [HTTP_FORBIDDEN, "HTTP request failed for #{ANY_VALID_URL}: 'Forbidden'"],
+          [HTTP_INTERNAL_SERVER_ERROR, "HTTP request failed for #{ANY_VALID_URL}: 'Internal Server Error'"]
+        ].each do |http_response, expected|
+          it "returns #{expected} on a HTTP #{http_response[0]} response" do
             Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-              and_return Response.new status, message
+              and_return Response.new *http_response
 
             base.send :http_request, ANY_VALID_URL
 
@@ -79,7 +84,7 @@ module Fetcher
 
       it "will call the provided block with the response body on HTTP OK" do
         Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-          and_return Response.new "200", "OK", "BODY DATA"
+          and_return Response.new *HTTP_OK, "BODY DATA"
 
         data = ""
         base.send(:http_request, ANY_VALID_URL) do |body|
