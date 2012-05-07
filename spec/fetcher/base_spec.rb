@@ -40,7 +40,7 @@ module Fetcher
         end
       end
 
-      it "should cause #success? to be true when it gets a HTTP OK response" do
+      it "should cause #success? to be true on a HTTP OK response" do
         Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
           and_return Net::HTTPOK.new "1.1", "200", "OK"
 
@@ -49,27 +49,19 @@ module Fetcher
       end
 
       describe "#message" do
-        it "returns 'Request succeeded' on a HTTP OK response" do
-          Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-            and_return Net::HTTPOK.new "1.1", "200", "OK"
-
-          base.send :http_request, ANY_VALID_URL
-
-          base.message.should == "Request succeeded"
-        end
-
         [
-          ["400", "Bad Request"],
-          ["403", "Forbidden"],
-          ["500", "Internal Server Error"]
-        ].each do |status, message|
-          it "returns 'HTTP request failed for #{ANY_VALID_URL}: #{message}'" do
+          ["200", "OK", "Request succeeded"],
+          ["400", "Bad Request", "HTTP request failed for #{ANY_VALID_URL}: 'Bad Request'"],
+          ["403", "Forbidden", "HTTP request failed for #{ANY_VALID_URL}: 'Forbidden'"],
+          ["500", "Internal Server Error", "HTTP request failed for #{ANY_VALID_URL}: 'Internal Server Error'"]
+        ].each do |status, message, expected|
+          it "returns #{expected} on a HTTP #{status} response" do
             Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
               and_return Net::HTTPResponse.new "1.1", status, message
 
             base.send :http_request, ANY_VALID_URL
 
-            base.message.should == "HTTP request failed for #{ANY_VALID_URL}: #{message}"
+            base.message.should == expected
           end
         end
       end

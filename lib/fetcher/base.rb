@@ -30,7 +30,7 @@ module Fetcher
         @message = "Request succeeded"
       else
         @last_request_status = false
-        @message = "HTTP request failed for #{url}: #{response.message}"
+        @message = "HTTP request failed for #{url}: '#{response.message}'"
       end
     end
   end
