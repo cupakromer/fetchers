@@ -3,22 +3,19 @@ require 'spec_helper'
 module Fetcher
   describe Base do
     EMPTY_CUE = []
+    let(:base) { Base.new EMPTY_CUE }
 
     describe "#success?" do
       it "returns the status of the last http request" do
-        b = Base.new EMPTY_CUE
+        base.should_receive(:last_request_status)
 
-        b.should_receive(:last_request_status)
-
-        b.success?
+        base.success?
       end
     end
 
     describe "#fetch" do
       it "raises a must be implemented by child class error" do
-        b = Base.new EMPTY_CUE
-
-        expect { b.fetch }.to raise_error "Must be implemented by child class"
+        expect{ base.fetch }.to raise_error "Must be implemented by child class"
       end
     end
 
@@ -37,8 +34,7 @@ module Fetcher
           Net::HTTP.should_receive(:get_response).with(URI url).
             and_return double("response").as_null_object
 
-          b = Base.new EMPTY_CUE
-          b.send :http_request, url
+          base.send :http_request, url
         end
       end
 
@@ -47,9 +43,8 @@ module Fetcher
         Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
           and_return Net::HTTPOK.new "1.1", "200", "OK"
 
-        b = Base.new EMPTY_CUE
-        b.send :http_request, ANY_VALID_URL
-        b.success?.should be_true
+        base.send :http_request, ANY_VALID_URL
+        base.success?.should be_true
       end
     end
   end
