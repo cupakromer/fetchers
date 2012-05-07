@@ -26,7 +26,7 @@ module Fetcher
     end
 
     describe "#fetch" do
-      it "raises a must be implemented by child class error" do
+      it "raises a 'Must be implemented by child class' error" do
         expect{ base.fetch }.to raise_error "Must be implemented by child class"
       end
     end
