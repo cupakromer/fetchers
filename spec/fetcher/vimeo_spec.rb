@@ -57,6 +57,17 @@ module Fetcher
 
       CHANNEL = "TestChannel"
       EXPECTED_URL = "http://vimeo.com/api/v2/channel/TestChannel/videos.json"
+      EXPECTED_DATA = {
+        title:        "Video 2",
+        url:          "http://www.vimeo.com/2",
+        description:  "Yummy stuff",
+        date:         "2012-04-06 5:27:38",
+        user:         "John Smith",
+        number_likes: "8",
+        number_plays: "10",
+        duration:     "222",
+        tags:         "Cake, Pie, Food"
+      }
 
       let(:json_data) { JSON.generate VIDEOS_DATA }
       let(:vimeo_test_channel) { Vimeo.new CHANNEL }
@@ -67,32 +78,12 @@ module Fetcher
       end
 
       it "returns data about the most recent video" do
-        vimeo_test_channel.fetch.should == {
-          title:        "Video 2",
-          url:          "http://www.vimeo.com/2",
-          description:  "Yummy stuff",
-          date:         "2012-04-06 5:27:38",
-          user:         "John Smith",
-          number_likes: "8",
-          number_plays: "10",
-          duration:     "222",
-          tags:         "Cake, Pie, Food"
-        }
+        vimeo_test_channel.fetch.should == EXPECTED_DATA
       end
 
       it "sets the data about the most recent video to reader :data" do
         vimeo_test_channel.fetch
-        vimeo_test_channel.data.should == {
-          title:        "Video 2",
-          url:          "http://www.vimeo.com/2",
-          description:  "Yummy stuff",
-          date:         "2012-04-06 5:27:38",
-          user:         "John Smith",
-          number_likes: "8",
-          number_plays: "10",
-          duration:     "222",
-          tags:         "Cake, Pie, Food"
-        }
+        vimeo_test_channel.data.should == EXPECTED_DATA
       end
     end
   end
