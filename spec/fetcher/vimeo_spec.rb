@@ -55,16 +55,19 @@ module Fetcher
         },
       ]
 
+      CHANNEL = "TestChannel"
+      EXPECTED_URL = "http://vimeo.com/api/v2/channel/TestChannel/videos.json"
+
       let(:json_data) { JSON.generate VIDEOS_DATA }
+      let(:vimeo_test_channel) { Vimeo.new CHANNEL }
+
+      before(:each) do
+        Net::HTTP.stub(:get_response).with(URI EXPECTED_URL).
+          and_return Response.new *HTTP_OK, json_data
+      end
 
       it "returns data about the most recent video" do
-        channel = "TestChannel"
-        expected_url = "http://vimeo.com/api/v2/channel/TestChannel/videos.json"
-        Net::HTTP.stub(:get_response).with(URI expected_url).
-          and_return Response.new *HTTP_OK, json_data
-
-        v = Vimeo.new channel
-        v.fetch.should == {
+        vimeo_test_channel.fetch.should == {
           title:        "Video 2",
           url:          "http://www.vimeo.com/2",
           description:  "Yummy stuff",
