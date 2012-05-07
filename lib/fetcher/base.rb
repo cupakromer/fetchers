@@ -15,16 +15,16 @@ module Fetcher
     end
 
     private
-    attr_accessor :last_request_status
+    attr_reader :last_request_status
 
     def http_request url, options = {}
       response = Net::HTTP.get_response URI url
 
       if "200" == response.code
-        # Research why SELF is needed here
-        self.last_request_status = true
+        # TODO: Research why SELF is needed here
+        @last_request_status = true
       else
-        self.last_request_status = false
+        @last_request_status = false
       end
     end
   end
