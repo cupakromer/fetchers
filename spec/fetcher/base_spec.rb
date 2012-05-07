@@ -75,6 +75,21 @@ module Fetcher
           end
         end
       end
+
+      it "will call the provided block with the response body on HTTP OK" do
+        Response = Struct.new :code, :message, :body
+        response = Response.new "200", "OK", "BODY DATA"
+
+        Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
+          and_return response
+
+        data = ""
+        base.send(:http_request, ANY_VALID_URL) do |body|
+          data = body
+        end
+
+        data.should == "BODY DATA"
+      end
     end
   end
 end

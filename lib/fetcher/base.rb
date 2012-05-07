@@ -29,6 +29,7 @@ module Fetcher
       if "200" == response.code
         @last_request_status = true
         @message = "Request succeeded"
+        yield response.body if block_given?
       else
         @last_request_status = false
         @message = "HTTP request failed for #{url}: '#{response.message}'"
