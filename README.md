@@ -24,6 +24,6 @@ allows for requesting data in JSON format.
 
 * #### Etsy ####
 
-  Requires a registration and API. Wanted to try my hand at using an API
-key at the same time creating something my wife could potentially use.
+  Requires registration and an API key. Wanted to try my hand at using an
+API key at the same time creating something my wife could potentially use.
 
