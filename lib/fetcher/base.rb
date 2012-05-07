@@ -3,10 +3,11 @@ require 'net/http'
 module Fetcher
   class Base
     def initialize cue
+      @last_request_status = false
     end
 
     def success?
-      !!last_request_status
+      last_request_status
     end
 
     def fetch
@@ -14,12 +15,17 @@ module Fetcher
     end
 
     private
-
-    def last_request_status
-    end
+    attr_accessor :last_request_status
 
     def http_request url, options = {}
       response = Net::HTTP.get_response URI url
+
+      if "200" == response.code
+        # Research why SELF is needed here
+        self.last_request_status = true
+      else
+        self.last_request_status = false
+      end
     end
   end
 end
