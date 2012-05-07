@@ -4,6 +4,7 @@ module Fetcher
   describe Base do
     EMPTY_CUE = []
     ANY_VALID_URL = "http://www.bing.com"
+    Response = Struct.new :code, :message, :body
 
     let(:base) { Base.new EMPTY_CUE }
 
@@ -52,7 +53,7 @@ module Fetcher
 
       it "should cause #success? to be true on a HTTP OK response" do
         Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-          and_return Net::HTTPOK.new "1.1", "200", "OK"
+          and_return Response.new "200", "OK"
 
         base.send :http_request, ANY_VALID_URL
         base.success?.should be_true
@@ -67,7 +68,7 @@ module Fetcher
         ].each do |status, message, expected|
           it "returns #{expected} on a HTTP #{status} response" do
             Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-              and_return Net::HTTPResponse.new "1.1", status, message
+              and_return Response.new status, message
 
             base.send :http_request, ANY_VALID_URL
 
@@ -77,11 +78,8 @@ module Fetcher
       end
 
       it "will call the provided block with the response body on HTTP OK" do
-        Response = Struct.new :code, :message, :body
-        response = Response.new "200", "OK", "BODY DATA"
-
         Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-          and_return response
+          and_return Response.new "200", "OK", "BODY DATA"
 
         data = ""
         base.send(:http_request, ANY_VALID_URL) do |body|
