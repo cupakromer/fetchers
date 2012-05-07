@@ -18,10 +18,12 @@ module Fetcher
     attr_reader :last_request_status
 
     def http_request url, options = {}
+      # TODO: Gracefully handle no internet connection, timeouts, bad URLs.
+      # Net::HTTP will just error in these cases and not return nice bad
+      # response objects
       response = Net::HTTP.get_response URI url
 
       if "200" == response.code
-        # TODO: Research why SELF is needed here
         @last_request_status = true
       else
         @last_request_status = false
