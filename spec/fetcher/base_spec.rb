@@ -3,6 +3,8 @@ require 'spec_helper'
 module Fetcher
   describe Base do
     EMPTY_CUE = []
+    ANY_VALID_URL = "http://www.bing.com"
+
     let(:base) { Base.new EMPTY_CUE }
 
     describe "#success?" do
@@ -38,7 +40,6 @@ module Fetcher
         end
       end
 
-      ANY_VALID_URL = "http://www.bing.com"
       it "should cause #success? to be true when it gets a 200 response" do
         Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
           and_return Net::HTTPOK.new "1.1", "200", "OK"
