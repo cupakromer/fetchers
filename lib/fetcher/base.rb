@@ -2,7 +2,7 @@ require 'net/http'
 
 module Fetcher
   class Base
-    attr_reader :message
+    attr_reader :message, :data
 
     def initialize cue
       @cue = cue

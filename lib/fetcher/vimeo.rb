@@ -11,7 +11,7 @@ module Fetcher
 
       most_recent = videos.max_by{|v| v[:upload_date]}
 
-      {
+      @data = {
         title: most_recent[:title],
         url: most_recent[:url],
         description: most_recent[:description],
