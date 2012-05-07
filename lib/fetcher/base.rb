@@ -5,6 +5,7 @@ module Fetcher
     attr_reader :message
 
     def initialize cue
+      @cue = cue
       @last_request_status = false
       @message = ""
     end
