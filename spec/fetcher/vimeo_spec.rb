@@ -65,15 +65,15 @@ module Fetcher
 
         v = Vimeo.new channel
         v.fetch.should == {
-          title:                 "Video 2",
-          url:                   "http://www.vimeo.com/2",
-          description:           "Yummy stuff",
-          upload_date:           "2012-04-06 5:27:38",
-          user_name:             "John Smith",
-          stats_number_of_likes: "8",
-          stats_number_of_plays: "10",
-          duration:              "222",
-          tags:                  "Cake, Pie, Food"
+          title:        "Video 2",
+          url:          "http://www.vimeo.com/2",
+          description:  "Yummy stuff",
+          date:         "2012-04-06 5:27:38",
+          user:         "John Smith",
+          number_likes: "8",
+          number_plays: "10",
+          duration:     "222",
+          tags:         "Cake, Pie, Food"
         }
       end
 
