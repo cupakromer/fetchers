@@ -63,9 +63,9 @@ module Fetcher
 
       API_KEY = "random_api_key"
       KEYWORDS = "harry potter"
-      EXPECTED_URL = "http://openapi.etsy.com/v2/listings/active?api_key=random_api_key&limit=5&sort_on=created&sort_order=down&keywords=harry,potter&fields=title,price,currency_code,url,ending_tsz"
+      ETSY_URL = "http://openapi.etsy.com/v2/listings/active?api_key=random_api_key&limit=5&sort_on=created&sort_order=down&keywords=harry,potter&fields=title,price,currency_code,url,ending_tsz"
 
-      EXPECTED_DATA = [
+      ETSY_DATA = [
         {
           title:                 "Deathly Hallows Necklace",
           price:                 "48.00",
@@ -104,20 +104,23 @@ module Fetcher
       ]
 
       let( :json_data         ) { JSON.generate ITEMS_DATA }
-      let( :etsy_active_items ) { Etsy.new      KEYWORDS   }
+      let( :etsy_active_items ) {
+        Etsy.API_Key = API_KEY
+        Etsy.new KEYWORDS
+      }
 
       before(:each) do
-        Net::HTTP.stub(:get_response).with(URI EXPECTED_URL).
+        Net::HTTP.stub(:get_response).with(URI ETSY_URL).
           and_return Response.new *HTTP_OK, json_data
       end
 
       it "returns data about the five most recent items" do
-        etsy_active_items.fetch.should == EXPECTED_DATA
+        etsy_active_items.fetch.should == ETSY_DATA
       end
 
       it "sets the data about the most recent items to reader :data" do
         etsy_active_items.fetch
-        etsy_active_items.data.should == EXPECTED_DATA
+        etsy_active_items.data.should == ETSY_DATA
       end
     end
   end
