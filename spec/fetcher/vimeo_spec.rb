@@ -53,10 +53,10 @@ module Fetcher
           duration:                "549",
           tags:                    "Coding, Fun"
         },
-      ]
+      ].freeze
 
-      CHANNEL = "TestChannel"
-      EXPECTED_URL = "http://vimeo.com/api/v2/channel/TestChannel/videos.json"
+      CHANNEL = "TestChannel".freeze
+      EXPECTED_URL = "http://vimeo.com/api/v2/channel/TestChannel/videos.json".freeze
       EXPECTED_DATA = {
         title:        "Video 2",
         url:          "http://www.vimeo.com/2",
@@ -67,7 +67,7 @@ module Fetcher
         number_plays: "10",
         duration:     "222",
         tags:         "Cake, Pie, Food"
-      }
+      }.freeze
 
       let(:json_data) { JSON.generate VIDEOS_DATA }
       let(:vimeo_test_channel) { Vimeo.new CHANNEL }

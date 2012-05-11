@@ -59,11 +59,11 @@ module Fetcher
           }
         ],
         type: "Listing",
-      }
+      }.freeze
 
       API_KEY = "random_api_key"
       KEYWORDS = "harry potter"
-      ETSY_URL = "http://openapi.etsy.com/v2/listings/active?api_key=random_api_key&limit=5&sort_on=created&sort_order=down&keywords=harry,potter&fields=title,price,currency_code,url,ending_tsz"
+      ETSY_URL = "http://openapi.etsy.com/v2/listings/active?api_key=random_api_key&limit=5&sort_on=created&sort_order=down&keywords=harry,potter&fields=title,price,currency_code,url,ending_tsz".freeze
 
       ETSY_DATA = [
         {
@@ -101,7 +101,7 @@ module Fetcher
           url:                   "http://www.etsy.com/listing/96592867",
           ending_tsz:            1347249600,
         }
-      ]
+      ].freeze
 
       let( :json_data         ) { JSON.generate ITEMS_DATA }
       let( :etsy_active_items ) {
