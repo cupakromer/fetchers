@@ -2,14 +2,8 @@ require 'spec_helper'
 
 module Fetcher
   describe Base do
-    EMPTY_CUE                  = []
-    ANY_VALID_URL              = "http://www.bing.com"
-    HTTP_OK                    = ["200", "OK"]
-    HTTP_BAD_REQUEST           = ["400", "Bad Request"]
-    HTTP_FORBIDDEN             = ["403", "Forbidden"]
-    HTTP_INTERNAL_SERVER_ERROR = ["500", "Internal Server Error"]
-
-    Response = Struct.new :code, :message, :body
+    EMPTY_CUE                  = [].freeze
+    ANY_VALID_URL              = "http://www.bing.com".freeze
 
     let(:base) { Base.new EMPTY_CUE }
 
