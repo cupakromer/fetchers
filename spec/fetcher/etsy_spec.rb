@@ -8,12 +8,12 @@ module Fetcher
         url = "http://openapi.etsy.com/v2/listings/active"
 
         params = {
-          api_key: "random_api_key",
-          limit: 5,
-          sort_on: "created",
+          api_key:    "random_api_key",
+          limit:      5,
+          sort_on:    "created",
           sort_order: "down",
-          keywords: "harry,potter",
-          fields: "title,price,currency_code,url,ending_tsz",
+          keywords:   "harry,potter",
+          fields:     "title,price,currency_code,url,ending_tsz",
         }
 
         stub_request(:get, url).with(query: params).
