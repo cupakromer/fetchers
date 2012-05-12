@@ -73,8 +73,7 @@ module Fetcher
       let(:vimeo_test_channel) { Vimeo.new CHANNEL }
 
       before(:each) do
-        Net::HTTP.stub(:get_response).with(URI EXPECTED_URL).
-          and_return Response.new *HTTP_OK, json_data
+        stub_request(:get, EXPECTED_URL).to_return(body: json_data)
       end
 
       it "returns data about the most recent video" do
