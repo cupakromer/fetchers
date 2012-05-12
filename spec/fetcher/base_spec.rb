@@ -2,10 +2,10 @@ require 'spec_helper'
 
 module Fetcher
   describe Base do
-    EMPTY_CUE                  = [].freeze
-    ANY_VALID_URL              = "http://www.bing.com".freeze
+    ANY_VALID_URL = "http://www.bing.com"
 
-    let(:base) { Base.new EMPTY_CUE }
+    let( :empty_cue  ) { [].freeze          }
+    let( :base       ) { Base.new empty_cue }
 
     describe "new object" do
       it "should return false on #success?" do
