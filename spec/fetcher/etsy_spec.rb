@@ -102,8 +102,7 @@ module Fetcher
           }
         ].freeze
 
-        Net::HTTP.stub(:get_response).with(URI @url).
-          and_return Response.new *HTTP_OK, json_data
+        stub_request(:get, @url).to_return(body: json_data)
       end
 
       let( :json_data         ) { JSON.generate @items_data }
