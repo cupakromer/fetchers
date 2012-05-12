@@ -15,8 +15,8 @@ documented here:
 > http://msdn.microsoft.com/en-us/library/hh441726.aspx
 
 
-Chosen APIs
------------
+Chosen APIs (Fetchers)
+----------------------
 * #### Vimeo ####
 
   Chosen as it has a public API that does not require registration. Also
@@ -26,4 +26,26 @@ allows for requesting data in JSON format.
 
   Requires registration and an API key. Wanted to try my hand at using an
 API key at the same time creating something my wife could potentially use.
+
+* #### URL Status ####
+
+  A simple fetcher that attempts to connect to a URL and returns:
+    * Code 20x: { available: true }
+    * Anything Else: { available: false }
+      - This includes handling timeouts
+      - Rescuing any exceptions
+
+* #### MapQuest Traffic ####
+
+
+* #### Travis-CI ####
+
+
+Addtional Features
+------------------
+* Support HTTPS
+  - Fetcher::Base#fetch should fully support an HTTPS url passed in
+  - Ammend Fetcher::Base to provide a 'secure_fetch' which forces HTTPS
+* Support handling timeouts after 30 seconds by default (but leave
+  configurable)
 
