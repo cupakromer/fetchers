@@ -41,18 +41,14 @@ module Fetcher
         "http://random.url.subdomain.net/test/api/tmp.json"
       ].each do |url|
         it "should make an HTTP request to the provided URL #{url}" do
-          # TODO: Learn to fake the internet itself
-          # This is a very brittle test
-          Net::HTTP.should_receive(:get_response).with(URI url).
-            and_return double("response").as_null_object
+          stub_request(:get, url)
 
           base.send :http_request, url
         end
       end
 
       it "should cause #success? to be true on a HTTP OK response" do
-        Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-          and_return Response.new *HTTP_OK
+        stub_request(:get, ANY_VALID_URL).to_return(status: HTTP_OK)
 
         base.send :http_request, ANY_VALID_URL
         base.success?.should be_true
@@ -66,8 +62,7 @@ module Fetcher
           [HTTP_INTERNAL_SERVER_ERROR, "HTTP request failed for #{ANY_VALID_URL}: 'Internal Server Error'"]
         ].each do |http_response, expected|
           it "returns #{expected} on a HTTP #{http_response[0]} response" do
-            Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-              and_return Response.new *http_response
+            stub_request(:get, ANY_VALID_URL).to_return(status: http_response)
 
             base.send :http_request, ANY_VALID_URL
 
@@ -77,8 +72,7 @@ module Fetcher
       end
 
       it "will call the provided block with the response body on HTTP OK" do
-        Net::HTTP.stub(:get_response).with(URI ANY_VALID_URL).
-          and_return Response.new *HTTP_OK, "BODY DATA"
+        stub_request(:get, ANY_VALID_URL).to_return(body: "BODY DATA")
 
         data = ""
         base.send(:http_request, ANY_VALID_URL) do |body|

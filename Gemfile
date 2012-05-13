@@ -1,1 +1,5 @@
-source 'https://rubygems.org'
+source :rubygems
+
+group :test do
+  gem "webmock"
+end
