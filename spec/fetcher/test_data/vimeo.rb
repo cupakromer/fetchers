@@ -1,3 +1,5 @@
+require 'json'
+
 module Fetcher
   module TestData
     class Vimeo
