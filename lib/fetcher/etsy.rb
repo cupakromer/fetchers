@@ -14,10 +14,11 @@ module Fetcher
 
     LISTING_FIELDS = %w[title price currency_code url ending_tsz].freeze
 
-    default_params(limit:      5,
+    default_params(
+      limit:      5,
       sort_on:    "created",
       sort_order: "down",
-                  )
+    )
 
     def fetch
       most_recent_items = http_request(ACTIVE_LISTINGS_URI, options)["results"]
