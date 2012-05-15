@@ -34,6 +34,19 @@ module Fetcher
           urlstatus.fetch.should == { available: false }
         end
       end
+
+      [
+        HTTParty::RedirectionTooDeep,
+        HTTParty::ResponseError,
+        SocketError,
+        Timeout::Error
+      ].each do |exception|
+        it "return { available: false } on exception #{exception}" do
+          stub_request(:get, ANY_VALID_URL).to_raise(exception)
+
+          urlstatus.fetch.should == { available: false }
+        end
+      end
     end
   end
 end
