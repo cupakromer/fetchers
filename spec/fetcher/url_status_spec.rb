@@ -37,5 +37,7 @@ module Fetcher
         urlstatus.data.should  == { available: false }
       end
     end
+
+    it "times out after 30 seconds"
   end
 end
