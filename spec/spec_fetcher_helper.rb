@@ -1,4 +1,9 @@
 HTTP_OK                    = ["200", "OK"].freeze
+HTTP_CREATED               = ["201", "Created"].freeze
+HTTP_ACCEPTED              = ["202", "Accepted"].freeze
+HTTP_NON_AUTHORITATIVE     = ["203", "Non-Authoritative Information"].freeze
+HTTP_NO_CONTENT            = ["204", "No Content"].freeze
+HTTP_RESET_CONTENT         = ["205", "Reset Content"].freeze
 HTTP_BAD_REQUEST           = ["400", "Bad Request"].freeze
 HTTP_FORBIDDEN             = ["403", "Forbidden"].freeze
 HTTP_INTERNAL_SERVER_ERROR = ["500", "Internal Server Error"].freeze
