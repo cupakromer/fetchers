@@ -23,6 +23,17 @@ module Fetcher
     end
 
     context "Unsuccessful Request" do
+      [
+        HTTP_BAD_REQUEST,
+        HTTP_FORBIDDEN,
+        HTTP_INTERNAL_SERVER_ERROR,
+      ].each do |code, message|
+        it "return { available: false } on #{code}" do
+          stub_request(:get, ANY_VALID_URL).to_return(status: [code, message])
+
+          urlstatus.fetch.should == { available: false }
+        end
+      end
     end
   end
 end
