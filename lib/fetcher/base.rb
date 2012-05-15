@@ -28,7 +28,7 @@ module Fetcher
       if /^2\d\d$/ =~ response.code.to_s
         @last_request_status = true
         @message = "Request succeeded"
-        yield response.parsed_response if block_given?
+        block_given? ? yield(response.parsed_response) : response
       else
         @last_request_status = false
         @message = "HTTP request failed for #{url}: '#{response.message}'"
