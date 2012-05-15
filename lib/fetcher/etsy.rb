@@ -13,11 +13,11 @@ module Fetcher
     ACTIVE_LISTINGS_URI = "/listings/active"
 
     LISTING_FIELDS = %w[title price currency_code url ending_tsz].freeze
-    PARAMETERS = {
-      limit:      5,
+
+    default_params(limit:      5,
       sort_on:    "created",
       sort_order: "down",
-    }.freeze
+                  )
 
     def fetch
       most_recent_items = http_request(ACTIVE_LISTINGS_URI, options)["results"]
@@ -35,7 +35,7 @@ module Fetcher
         api_key:  self.class.API_Key,
         keywords: @cue.split(/\s/).join(','),
         fields:   LISTING_FIELDS.join(','),
-      }.merge     PARAMETERS
+      }
     end
 
     def format_items(data)
