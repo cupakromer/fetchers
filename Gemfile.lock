@@ -3,6 +3,7 @@ GEM
   specs:
     addressable (2.2.8)
     crack (0.3.1)
+    geocoder (1.1.1)
     httparty (0.8.1)
       multi_json
       multi_xml
@@ -16,5 +17,6 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  geocoder
   httparty
   webmock
