@@ -38,7 +38,8 @@ module Fetcher
       [
         "http://www.google.com",
         "http://bing.com/ajax",
-        "http://random.url.subdomain.net/test/api/tmp.json"
+        "http://random.url.subdomain.net/test/api/tmp.json",
+        "https://www.bing.com/stuff"
       ].each do |url|
         it "should make an HTTP request to the provided URL #{url}" do
           stub_request(:get, url)

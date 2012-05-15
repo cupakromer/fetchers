@@ -3,6 +3,11 @@ GEM
   specs:
     addressable (2.2.8)
     crack (0.3.1)
+    httparty (0.8.1)
+      multi_json
+      multi_xml
+    multi_json (1.2.0)
+    multi_xml (0.4.2)
     webmock (1.8.7)
       addressable (>= 2.2.7)
       crack (>= 0.1.7)
@@ -11,4 +16,5 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
+  httparty
   webmock

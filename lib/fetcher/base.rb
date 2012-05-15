@@ -1,10 +1,11 @@
-require 'net/http'
+require 'httparty'
 
 module Fetcher
   class Base
+    include HTTParty
     attr_reader :message, :data
 
-    def initialize cue
+    def initialize(cue)
       @cue = cue
       @last_request_status = false
       @message = ""
@@ -21,16 +22,13 @@ module Fetcher
     private
     attr_reader :last_request_status
 
-    def http_request url, options = {}
-      # TODO: Gracefully handle no internet connection, timeouts, bad URLs.
-      # Net::HTTP will just error in these cases and not return nice bad
-      # response objects
-      response = Net::HTTP.get_response URI url
+    def http_request(url, options = {})
+      response = self.class.get url, options
 
-      if "200" == response.code
+      if /^2\d\d$/ =~ response.code.to_s
         @last_request_status = true
         @message = "Request succeeded"
-        yield response.body if block_given?
+        block_given? ? yield(response.parsed_response) : response
       else
         @last_request_status = false
         @message = "HTTP request failed for #{url}: '#{response.message}'"

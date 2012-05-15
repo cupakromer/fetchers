@@ -7,50 +7,45 @@ module Fetcher
       attr_accessor :API_Key
     end
 
-    BASE_URL = "http://openapi.etsy.com/v2"
+    base_uri "openapi.etsy.com/v2"
+    format :json
+
     ACTIVE_LISTINGS_URI = "/listings/active"
 
     LISTING_FIELDS = %w[title price currency_code url ending_tsz].freeze
 
-    PARAMETERS = {
+    default_params(
       limit:      5,
       sort_on:    "created",
       sort_order: "down",
-    }.freeze
+    )
 
     def fetch
-      data = http_request(generate_url) { |json_data|
-        JSON.parse json_data, allow_nan: true, symbolize_names: true
-      }[:results]
+      most_recent_items = http_request(ACTIVE_LISTINGS_URI, options)["results"]
 
-      @data = extract_items data
+      @data = format_items most_recent_items
     end
 
     private
-    def generate_url
-      "#{BASE_URL}#{ACTIVE_LISTINGS_URI}?api_key=#{self.class.API_Key}&" \
-      "#{parameters_query}&#{keywords_query}&#{fields_query}"
+    def options
+      { query: generate_query }
     end
 
-    def keywords_query
-      "keywords=#{@cue.split(/\s/).join(',')}"
+    def generate_query
+      {
+        api_key:  self.class.API_Key,
+        keywords: @cue.split(/\s/).join(','),
+        fields:   LISTING_FIELDS.join(','),
+      }
     end
 
-    def fields_query
-      "fields=#{LISTING_FIELDS.join ','}"
-    end
-
-    def parameters_query
-      PARAMETERS.map{ |k,v| "#{k}=#{v}" }.join '&'
-    end
-
-    def extract_items data
+    def format_items(data)
       data.map{ |item| extract_desired_fields item }
     end
 
-    def extract_desired_fields item_data
+    def extract_desired_fields(item_data)
       LISTING_FIELDS.each_with_object({}) do |field, data|
-        data[field.to_sym] = item_data[field.to_sym]
+        data[field.to_sym] = item_data[field]
       end
     end
   end
