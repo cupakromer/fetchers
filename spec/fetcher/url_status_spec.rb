@@ -18,6 +18,7 @@ module Fetcher
           stub_request(:get, ANY_VALID_URL).to_return(status: [code, message])
 
           urlstatus.fetch.should == { available: true }
+          urlstatus.data.should  == { available: true }
         end
       end
     end
@@ -32,6 +33,7 @@ module Fetcher
           stub_request(:get, ANY_VALID_URL).to_return(status: [code, message])
 
           urlstatus.fetch.should == { available: false }
+          urlstatus.data.should  == { available: false }
         end
       end
 
@@ -45,6 +47,7 @@ module Fetcher
           stub_request(:get, ANY_VALID_URL).to_raise(exception)
 
           urlstatus.fetch.should == { available: false }
+          urlstatus.data.should  == { available: false }
         end
       end
     end

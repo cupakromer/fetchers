@@ -1,7 +1,7 @@
 module Fetcher
   class UrlStatus < Base
     def fetch
-      begin
+      @data = begin
         http_request @cue
         { available: success? }
       rescue => e
