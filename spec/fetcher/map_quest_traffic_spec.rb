@@ -1,5 +1,6 @@
 require 'spec_helper'
 require_relative 'test_data/map_quest_traffic'
+require 'json'
 
 module Fetcher
   describe MapQuestTraffic do
@@ -23,11 +24,16 @@ module Fetcher
 
           stub_request(:get, @location_url).
             with(query: {key: @api_key, location: zip_code}).
-            to_return(body: TestData::MapQuestTraffic::ZIP_DATA)
+            to_return(body: JSON.generate(TestData::MapQuestTraffic::ZIP_DATA))
 
-          stub_request(:get, @traffic_url).with(query: {}).
-            with(query: {key: @api_key, boundingBox: TestData::MapQuestTraffic::BOUNDING_BOX, filters: :incidents, outFormat: :json}).
-            to_return(body: TestData::MapQuestTraffic.data_with_0_severe_incidents)
+          stub_request(:get, @traffic_url).
+            with(query: {
+              key: @api_key,
+              boundingBox: TestData::MapQuestTraffic::BOUNDING_BOX.join(','),
+              filters: :incidents,
+              outFormat: :json
+            }).
+            to_return(body: JSON.generate(TestData::MapQuestTraffic.send "data_with_#{count}_severe_incidents"))
 
           MapQuestTraffic.API_Key = @api_key
           map_quest = MapQuestTraffic.new zip_code
