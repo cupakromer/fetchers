@@ -22,13 +22,13 @@ module Fetcher
     end
 
     private
-    def find_bounding_box_for_zip
-      location_data = http_request(LOCATION_URL + ADDRESS_URI, address_options)
-      box = Geocoder::Calculations.bounding_box extract_lat_lng(location_data), 10
+    def find_bounding_box_from_zip
+      location = http_request LOCATION_URL + ADDRESS_URI, address_options
+      box = Geocoder::Calculations.bounding_box extract_lat_lng(location), 10
 
-      s_lat, w_lng, n_lat, e_lng = *box
+      south_lat, west_lng, north_lat, east_lng = *box
 
-      [n_lat, w_lng, s_lat, e_lng]
+      [north_lat, west_lng, south_lat, east_lng] # upper left, lower right
     end
 
     def extract_lat_lng location_data
@@ -40,7 +40,7 @@ module Fetcher
       {
         query: {
           key:      self.class.API_Key,
-          location: @cue.to_s
+          location: @cue
         }
       }
     end
@@ -49,7 +49,7 @@ module Fetcher
       {
         query: {
           key:         self.class.API_Key,
-          boundingBox: find_bounding_box_for_zip.join(','),
+          boundingBox: find_bounding_box_from_zip.join(','),
           filters:     :incidents,
           outFormat:   :json
         }
