@@ -12,9 +12,9 @@ module Fetcher
 
       def self.data_with_1_severe_incidents
         data = TRAFFIC_DATA.dup
-        data["incidents"] = INCIDENTS.first { |incident|
+        data["incidents"] = [INCIDENTS.find { |incident|
           incident["severity"] == 4
-        }
+        }]
         data
       end
 
@@ -44,7 +44,7 @@ module Fetcher
         }
       }.freeze
 
-      BOUNDING_BOX = [39.04903178311085, -76.9404162893162, 38.75956821688915, -77.3123837106838].freeze
+      BOUNDING_BOX = [39.04903178311085, -77.3123837106838, 38.75956821688915,-76.9404162893162].freeze
 
       INCIDENTS = [
         {
@@ -92,7 +92,7 @@ module Fetcher
         {
           "fullDesc" => "In DENVER accident on E 1ST AVE between STEELE ST and JOSEPHINE ST",
           "lng" => -104.9591,
-          "severity" => 1,
+          "severity" => 4,
           "shortDesc" => "Accident(s) on E 1ST AVE between STEELE ST and JOSEPHINE ST",
           "endTime" => "2012-05-15T20:07:02",
           "type" => 4,
