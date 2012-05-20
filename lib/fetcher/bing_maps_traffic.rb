@@ -7,23 +7,26 @@ module Fetcher
       attr_accessor :API_Key
     end
 
-    API_URL  = "http://dev.virtualearth.net/REST/v1"
     ADDRESS_URI   = "/Locations"
     INCIDENTS_URI = "/Traffic/Incidents"
 
-    base_uri API_URL
+    base_uri "http://dev.virtualearth.net/REST/v1"
     format :json
 
     def fetch
-      @data = http_request(INCIDENTS_URI + "/#{find_bounding_box_from_zip}", traffic_options) do |data|
-        data["resourceSets"][0]["resources"].count{ |incident| incident["severity"] == 4 }
+      @data = http_request(bounding_box_uri, traffic_options) do |data|
+        count_severe_incidents data
       end
     end
 
     private
+    def bounding_box_uri
+      INCIDENTS_URI + "/#{find_bounding_box_from_zip}"
+    end
+
     def find_bounding_box_from_zip
-      location = http_request ADDRESS_URI, address_options
-      box = location["resourceSets"][0]["resources"][0]["bbox"]
+      location_data = http_request ADDRESS_URI, address_options
+      box = location_data["resourceSets"][0]["resources"][0]["bbox"]
 
       south_lat, west_lng, north_lat, east_lng = *box
 
@@ -32,22 +35,25 @@ module Fetcher
     end
 
     def address_options
-      {
-        query: {
-          key:   self.class.API_Key,
-          query: @cue
-        }
-      }
+      as_query query: @cue
     end
 
     def traffic_options
+      as_query severity: 4, o: "json"
+    end
+
+    def as_query( options )
       {
-        query: {
-          key:      self.class.API_Key,
-          severity: 4,
-          o:        "json",
-        }
+        query: { key: self.class.API_Key }.merge(options)
       }
+    end
+
+    def count_severe_incidents( response_body )
+      get_incidents(response_body).count{ |incident| incident["severity"] == 4 }
+    end
+
+    def get_incidents( incident_response_body )
+      incident_response_body["resourceSets"][0]["resources"]
     end
   end
 end
