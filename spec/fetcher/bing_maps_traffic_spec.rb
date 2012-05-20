@@ -33,7 +33,7 @@ module Fetcher
             with(query: {key: @api_key, query: zip_code}).
             to_return(body: JSON.generate(TestData::BingMapsTraffic::ZIP_DATA))
 
-          stub_request(:get, @traffic_url + "#{TestData::BingMapsTraffic::BOUNDING_BOX.join ','}").
+          stub_request(:get, @traffic_url + "/#{TestData::BingMapsTraffic::BOUNDING_BOX.join ','}").
             with(query: @params).
             to_return(body: JSON.generate(TestData::BingMapsTraffic.send "data_with_#{count}_severe_incidents"))
 
