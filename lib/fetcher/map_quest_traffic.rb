@@ -9,10 +9,9 @@ module Fetcher
 
     LOCATION_URL  = "http://www.mapquestapi.com/geocoding/v1"
     ADDRESS_URI   = "/address"
-    TRAFFIC_URL   = "http://www.mapquestapi.com/traffic/v1"
     INCIDENTS_URI = "/incidents"
 
-    base_uri TRAFFIC_URL
+    base_uri "http://www.mapquestapi.com/traffic/v1"
     format :json
 
     def fetch
@@ -37,22 +36,18 @@ module Fetcher
     end
 
     def address_options
-      {
-        query: {
-          key:      self.class.API_Key,
-          location: @cue
-        }
-      }
+      as_query location: @cue
     end
 
     def traffic_options
+      as_query boundingBox: find_bounding_box_from_zip.join(','),
+               filters:     :incidents,
+               outFormat:   :json
+    end
+
+    def as_query( options )
       {
-        query: {
-          key:         self.class.API_Key,
-          boundingBox: find_bounding_box_from_zip.join(','),
-          filters:     :incidents,
-          outFormat:   :json
-        }
+        query: { key: self.class.API_Key }.merge(options)
       }
     end
   end
