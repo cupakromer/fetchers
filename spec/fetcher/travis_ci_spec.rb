@@ -11,7 +11,7 @@ module Fetcher
       end
 
       let( :travis_ci_project ) {
-        Project = Struct.new :owner_name, :name
+        Project = Struct.new :owner, :name
         TravisCI.new Project.new("owner_name", "name")
       }
 
