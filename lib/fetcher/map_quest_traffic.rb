@@ -1,4 +1,36 @@
 require 'geocoder'
+require 'geocoder/results/google'
+
+class Geocoder::Result::Google
+  BOUNDING_BOX_KEYS = [:north_lat, :east_lng, :south_lat, :west_lng].freeze
+
+  def bounding_box( order = BOUNDING_BOX_KEYS )
+    coordinates = map_box_keys_to_values
+    order.map{ |key| coordinates[key] }
+  end
+
+  private
+
+  def extract_bounding_box
+    bounds = geometry["bounds"]
+    [
+      bounds["northeast"]["lat"], # :north_lat
+      bounds["northeast"]["lng"], # :east_lng
+      bounds["southwest"]["lat"], # :south_lat
+      bounds["southwest"]["lng"], # :west_lng
+    ]
+  end
+
+  # Map the BOUNDING_BOX_KEYS to the associated values
+  # Returns hash as:
+  # {
+  #   north_lat: 39.0464399, east_lng: -76.9836289,
+  #   south_lat: 38.995162,  west_lng: -77.033157
+  # }
+  def map_box_keys_to_values
+    Hash[*BOUNDING_BOX_KEYS.zip(extract_bounding_box).flatten]
+  end
+end
 
 module Fetcher
   class MapQuestTraffic < Base
@@ -21,18 +53,9 @@ module Fetcher
     end
 
     private
-    def find_bounding_box_from_zip
-      location = http_request LOCATION_URL + ADDRESS_URI, address_options
-      box = Geocoder::Calculations.bounding_box extract_lat_lng(location), 10
-
-      south_lat, west_lng, north_lat, east_lng = *box
-
-      [north_lat, west_lng, south_lat, east_lng] # upper left, lower right
-    end
-
-    def extract_lat_lng location_data
-      lat_lng = location_data["results"][0]["locations"][0]["latLng"]
-      [lat_lng["lat"], lat_lng["lng"]]
+    def find_zip_bounding_box
+      order = [:north_lat, :west_lng, :south_lat, :east_lng]
+      Geocoder.search(@cue)[0].bounding_box order
     end
 
     def address_options
@@ -40,7 +63,7 @@ module Fetcher
     end
 
     def traffic_options
-      as_query boundingBox: find_bounding_box_from_zip.join(','),
+      as_query boundingBox: find_zip_bounding_box.join(','),
                filters:     :incidents,
                outFormat:   :json
     end

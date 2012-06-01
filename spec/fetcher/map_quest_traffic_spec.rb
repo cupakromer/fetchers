@@ -13,6 +13,29 @@ module Fetcher
         @params = {
           key: @api_key,
         }
+        @geocode_data = <<DATA
+{
+   "results" : [
+      {
+         "formatted_address" : "US City, Some place, USA",
+         "geometry" : {
+            "bounds" : {
+               "northeast" : {
+                  "lat" : 39.04903178311085,
+                  "lng" : -76.9404162893162
+               },
+               "southwest" : {
+                  "lat" : 38.75956821688915,
+                  "lng" : -77.3123837106838
+               }
+            }
+         },
+         "types" : [ "postal_code" ]
+      }
+   ],
+   "status" : "OK"
+}
+DATA
       end
 
       [
@@ -22,9 +45,10 @@ module Fetcher
       ].each do |zip_code, count|
         it "#{zip_code} returns a count of #{count} severe traffic incidents" do
 
-          stub_request(:get, @location_url).
-            with(query: {key: @api_key, location: zip_code}).
-            to_return(body: JSON.generate(TestData::MapQuestTraffic::ZIP_DATA))
+          stub_request(:get,
+          "http://maps.googleapis.com/maps/api/geocode/json").
+            with(query: {address: zip_code, language: :en, sensor: :false}).
+            to_return(body: @geocode_data)
 
           stub_request(:get, @traffic_url).
             with(query: {
