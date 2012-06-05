@@ -7,7 +7,6 @@ module Fetcher
       attr_accessor :API_Key
     end
 
-    ADDRESS_URI   = "/Locations"
     INCIDENTS_URI = "/Traffic/Incidents"
 
     base_uri "http://dev.virtualearth.net/REST/v1"
@@ -25,17 +24,8 @@ module Fetcher
     end
 
     def find_bounding_box_from_zip
-      location_data = http_request ADDRESS_URI, address_options
-      box = location_data["resourceSets"][0]["resources"][0]["bbox"]
-
-      south_lat, west_lng, north_lat, east_lng = *box
-
-      # lower left, upper right
-      [south_lat, west_lng, north_lat, east_lng].join ','
-    end
-
-    def address_options
-      as_query query: @cue
+      order = [:south_lat, :west_lng, :north_lat, :east_lng]
+      Geocoder.search(@cue)[0].bounding_box(order).join ','
     end
 
     def traffic_options
