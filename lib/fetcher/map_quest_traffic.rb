@@ -15,7 +15,7 @@ module Fetcher
 
     def fetch
       @data = http_request(INCIDENTS_URI, traffic_options) do |data|
-        data["incidents"].count{ |incident| incident["severity"] == 4 }
+        count_sever_incidents data
       end
     end
 
@@ -29,6 +29,10 @@ module Fetcher
       as_query boundingBox: find_zip_bounding_box.join(','),
                filters:     :incidents,
                outFormat:   :json
+    end
+
+    def count_sever_incidents( response_body )
+        response_body["incidents"].count{ |incident| incident["severity"] == 4 }
     end
 
     def as_query( options )
