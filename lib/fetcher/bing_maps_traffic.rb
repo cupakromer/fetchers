@@ -26,7 +26,9 @@ module Fetcher
     end
 
     def find_zip_bounding_box( order )
-      Geocoder.search(@cue)[0].bounding_box(order).join(',')
+      results = Geocoder.search(@cue)[0]
+      results = Geocoder.search(results.extract_zip)[0] unless results.is_zip?
+      results.bounding_box(order).join(',')
     end
 
     def traffic_options

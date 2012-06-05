@@ -8,6 +8,17 @@ class Geocoder::Result::Google
     order.map{ |key| coordinates[key] }
   end
 
+  def extract_zip
+    zip_component = address_components.find do |address_component|
+      address_component["types"].include? "postal_code"
+    end
+    zip_component["short_name"] if zip_component
+  end
+
+  def is_zip?
+    types.include? "postal_code"
+  end
+
   private
 
   def extract_bounding_box
