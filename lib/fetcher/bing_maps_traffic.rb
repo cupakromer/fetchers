@@ -8,25 +8,25 @@ module Fetcher
       attr_accessor :API_Key
     end
 
-    INCIDENTS_URI = "/Traffic/Incidents"
+    TRAFFIC_INCIDENTS_URI = "/Traffic/Incidents"
 
     base_uri "http://dev.virtualearth.net/REST/v1"
     format :json
 
     def fetch
-      @data = http_request(bounding_box_uri, traffic_options) do |data|
+      @data = http_request(traffic_incident_uri, traffic_options) do |data|
         count_severe_incidents data
       end
     end
 
     private
-    def bounding_box_uri
-      INCIDENTS_URI + "/#{find_bounding_box_from_zip}"
+    def traffic_incident_uri
+      order = [:south_lat, :west_lng, :north_lat, :east_lng]
+      TRAFFIC_INCIDENTS_URI + "/#{find_zip_bounding_box order}"
     end
 
-    def find_bounding_box_from_zip
-      order = [:south_lat, :west_lng, :north_lat, :east_lng]
-      Geocoder.search(@cue)[0].bounding_box(order).join ','
+    def find_zip_bounding_box( order )
+      Geocoder.search(@cue)[0].bounding_box(order).join(',')
     end
 
     def traffic_options
