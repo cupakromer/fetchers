@@ -57,15 +57,11 @@ DATA
             with(query: {address: zip_code, language: :en, sensor: :false}).
             to_return(body: @geocode_data)
 
-#          stub_request(:get, @location_url).
-#            with(query: {key: @api_key, query: zip_code}).
-#            to_return(body: JSON.generate(TestData::BingMapsTraffic::ZIP_DATA))
-
           stub_request(:get, @traffic_url + "/#{TestData::BingMapsTraffic::BOUNDING_BOX.join ','}").
             with(query: @params).
             to_return(body: JSON.generate(TestData::BingMapsTraffic.send "data_with_#{count}_severe_incidents"))
 
-          BingMapsTraffic.API_Key = @api_key
+          BingMapsTraffic.api_key = @api_key
           map_quest = BingMapsTraffic.new zip_code
 
           map_quest.fetch.should == count
