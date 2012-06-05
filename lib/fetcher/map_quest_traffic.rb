@@ -24,15 +24,18 @@ module Fetcher
       TRAFFIC_INCIDENTS_URI
     end
 
-    def find_zip_bounding_box( order )
+    def zip_geocode_data
       results = Geocoder.search(@cue)[0]
-      results = results.is_zip? ? results : Geocoder.search(results.extract_zip)[0]
-      results.bounding_box(order).join(',')
+      results.is_zip? ? results : Geocoder.search(results.extract_zip)[0]
+    end
+
+    def bounding_box( order )
+      zip_geocode_data.bounding_box(order).join(',')
     end
 
     def traffic_options
       order = [:north_lat, :west_lng, :south_lat, :east_lng]
-      as_query boundingBox: find_zip_bounding_box(order),
+      as_query boundingBox: bounding_box(order),
                filters:     :incidents,
                outFormat:   :json
     end
