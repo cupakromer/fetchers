@@ -38,6 +38,6 @@ module Fetcher
       end
     end
 
-    #it "times out after 30 seconds"
+    it "times out after 30 seconds"
   end
 end
