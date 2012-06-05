@@ -22,13 +22,16 @@ module Fetcher
     private
     def traffic_incident_uri
       order = [:south_lat, :west_lng, :north_lat, :east_lng]
-      TRAFFIC_INCIDENTS_URI + "/#{find_zip_bounding_box order}"
+      TRAFFIC_INCIDENTS_URI + "/#{bounding_box order}"
     end
 
-    def find_zip_bounding_box( order )
+    def bounding_box( order )
+      zip_geocode_data.bounding_box(order).join(',')
+    end
+
+    def zip_geocode_data
       results = Geocoder.search(@cue)[0]
-      results = Geocoder.search(results.extract_zip)[0] unless results.is_zip?
-      results.bounding_box(order).join(',')
+      results.is_zip? ? results : Geocoder.search(results.extract_zip)[0]
     end
 
     def traffic_options
