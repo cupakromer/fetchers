@@ -1,53 +1,52 @@
 require 'geocoder'
+require 'geocoder/ext/result_google'
+require 'api_key'
 
 module Fetcher
   class MapQuestTraffic < Base
-    @API_Key = nil
-    class << self
-      attr_accessor :API_Key
-    end
+    include APIKey
 
-    LOCATION_URL  = "http://www.mapquestapi.com/geocoding/v1"
-    ADDRESS_URI   = "/address"
-    INCIDENTS_URI = "/incidents"
+    api_key_param_name :key
+
+    TRAFFIC_INCIDENTS_URI = "/incidents"
 
     base_uri "http://www.mapquestapi.com/traffic/v1"
     format :json
 
     def fetch
-      @data = http_request(INCIDENTS_URI, traffic_options) do |data|
-        data["incidents"].count{ |incident| incident["severity"] == 4 }
+      @data = http_request(traffic_incident_uri, traffic_options) do |data|
+        count_sever_incidents data
       end
     end
 
     private
-    def find_bounding_box_from_zip
-      location = http_request LOCATION_URL + ADDRESS_URI, address_options
-      box = Geocoder::Calculations.bounding_box extract_lat_lng(location), 10
-
-      south_lat, west_lng, north_lat, east_lng = *box
-
-      [north_lat, west_lng, south_lat, east_lng] # upper left, lower right
+    def traffic_incident_uri
+      TRAFFIC_INCIDENTS_URI
     end
 
-    def extract_lat_lng location_data
-      lat_lng = location_data["results"][0]["locations"][0]["latLng"]
-      [lat_lng["lat"], lat_lng["lng"]]
+    def zip_geocode_data
+      results = Geocoder.search(@cue)[0]
+      results.is_zip? ? results : Geocoder.search(results.extract_zip)[0]
     end
 
-    def address_options
-      as_query location: @cue
+    def bounding_box( order )
+      zip_geocode_data.bounding_box(order).join(',')
     end
 
     def traffic_options
-      as_query boundingBox: find_bounding_box_from_zip.join(','),
+      order = [:north_lat, :west_lng, :south_lat, :east_lng]
+      as_query boundingBox: bounding_box(order),
                filters:     :incidents,
                outFormat:   :json
     end
 
+    def count_sever_incidents( response_body )
+        response_body["incidents"].count{ |incident| incident["severity"] == 4 }
+    end
+
     def as_query( options )
       {
-        query: { key: self.class.API_Key }.merge(options)
+        query: api_key_option.merge(options)
       }
     end
   end

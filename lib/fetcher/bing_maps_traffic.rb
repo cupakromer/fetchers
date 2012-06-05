@@ -1,41 +1,37 @@
 require 'geocoder'
+require 'geocoder/ext/result_google'
+require 'api_key'
 
 module Fetcher
   class BingMapsTraffic < Base
-    @API_Key = nil
-    class << self
-      attr_accessor :API_Key
-    end
+    include APIKey
 
-    ADDRESS_URI   = "/Locations"
-    INCIDENTS_URI = "/Traffic/Incidents"
+    api_key_param_name :key
+
+    TRAFFIC_INCIDENTS_URI = "/Traffic/Incidents"
 
     base_uri "http://dev.virtualearth.net/REST/v1"
     format :json
 
     def fetch
-      @data = http_request(bounding_box_uri, traffic_options) do |data|
+      @data = http_request(traffic_incident_uri, traffic_options) do |data|
         count_severe_incidents data
       end
     end
 
     private
-    def bounding_box_uri
-      INCIDENTS_URI + "/#{find_bounding_box_from_zip}"
+    def traffic_incident_uri
+      order = [:south_lat, :west_lng, :north_lat, :east_lng]
+      TRAFFIC_INCIDENTS_URI + "/#{bounding_box order}"
     end
 
-    def find_bounding_box_from_zip
-      location_data = http_request ADDRESS_URI, address_options
-      box = location_data["resourceSets"][0]["resources"][0]["bbox"]
-
-      south_lat, west_lng, north_lat, east_lng = *box
-
-      # lower left, upper right
-      [south_lat, west_lng, north_lat, east_lng].join ','
+    def bounding_box( order )
+      zip_geocode_data.bounding_box(order).join(',')
     end
 
-    def address_options
-      as_query query: @cue
+    def zip_geocode_data
+      results = Geocoder.search(@cue)[0]
+      results.is_zip? ? results : Geocoder.search(results.extract_zip)[0]
     end
 
     def traffic_options
@@ -44,7 +40,7 @@ module Fetcher
 
     def as_query( options )
       {
-        query: { key: self.class.API_Key }.merge(options)
+        query: api_key_option.merge(options)
       }
     end
 

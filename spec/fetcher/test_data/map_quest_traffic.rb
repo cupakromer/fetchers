@@ -26,24 +26,6 @@ module Fetcher
         data
       end
 
-      ZIP_DATA = {
-        "results" => [
-          {
-            "locations" => [
-              {
-                "latLng" => { "lng" => -77.1264, "lat" => 38.9043 },
-                "displayLatLng" => { "lng" => -77.1264, "lat" => 38.9043 },
-                "geocodeQuality" => "ZIP",
-              }
-            ],
-          }
-        ],
-        "info" => {
-          "statuscode" => 0,
-          "messages" => []
-        }
-      }.freeze
-
       BOUNDING_BOX = [39.04903178311085, -77.3123837106838, 38.75956821688915,-76.9404162893162].freeze
 
       INCIDENTS = [
