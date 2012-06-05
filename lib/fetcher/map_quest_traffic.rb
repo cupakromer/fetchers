@@ -1,12 +1,12 @@
 require 'geocoder'
 require 'geocoder/ext/result_google'
+require 'api_key'
 
 module Fetcher
   class MapQuestTraffic < Base
-    @API_Key = nil
-    class << self
-      attr_accessor :API_Key
-    end
+    include APIKey
+
+    api_key_param_name :key
 
     TRAFFIC_INCIDENTS_URI = "/incidents"
 
@@ -41,7 +41,7 @@ module Fetcher
 
     def as_query( options )
       {
-        query: { key: self.class.API_Key }.merge(options)
+        query: api_key_option.merge(options)
       }
     end
   end

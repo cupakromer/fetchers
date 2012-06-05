@@ -59,7 +59,7 @@ DATA
             }).
             to_return(body: JSON.generate(TestData::MapQuestTraffic.send "data_with_#{count}_severe_incidents"))
 
-          MapQuestTraffic.API_Key = @api_key
+          MapQuestTraffic.api_key = @api_key
           map_quest = MapQuestTraffic.new zip_code
 
           map_quest.fetch.should == count
