@@ -1,4 +1,5 @@
 require 'geocoder'
+require 'geocoder/ext/result_google'
 
 module Fetcher
   class BingMapsTraffic < Base
