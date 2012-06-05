@@ -1,5 +1,11 @@
-Apprentice Homework Assignment
-==============================
+Web API Fetchers Project
+========================
+
+[![Build
+Status](https://secure.travis-ci.org/cupakromer/fetchers.png?branch=master)](http://travis-ci.org/cupakromer/fetchers)
+[![Build
+Status](https://secure.travis-ci.org/cupakromer/fetchers.png?branch=develop)](http://travis-ci.org/cupakromer/fetchers)
+
 
 Tasks
 -----
