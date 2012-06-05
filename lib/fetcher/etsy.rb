@@ -1,11 +1,10 @@
-require 'json'
+require 'api_key'
 
 module Fetcher
   class Etsy < Base
-    @API_Key = nil
-    class << self
-      attr_accessor :API_Key
-    end
+    include APIKey
+
+    api_key_param_name :api_key
 
     base_uri "openapi.etsy.com/v2"
     format :json
@@ -33,7 +32,7 @@ module Fetcher
 
     def generate_query
       {
-        api_key:  self.class.API_Key,
+        api_key:  api_key,
         keywords: @cue.split(/\s/).join(','),
         fields:   LISTING_FIELDS.join(','),
       }

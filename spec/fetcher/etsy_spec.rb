@@ -23,7 +23,7 @@ module Fetcher
       let( :etsy_active_items ) {
         keywords = "harry potter"
 
-        Etsy.API_Key = "random_api_key"
+        Etsy.api_key = "random_api_key"
 
         Etsy.new keywords
       }
