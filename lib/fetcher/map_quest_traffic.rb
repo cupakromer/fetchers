@@ -35,19 +35,13 @@ module Fetcher
 
     def traffic_options
       order = [:north_lat, :west_lng, :south_lat, :east_lng]
-      as_query boundingBox: bounding_box(order),
-               filters:     :incidents,
-               outFormat:   :json
+      wrap_query_options api_key_option.merge boundingBox: bounding_box(order),
+                                              filters:     :incidents,
+                                              outFormat:   :json
     end
 
     def count_sever_incidents( response_body )
         response_body["incidents"].count{ |incident| incident["severity"] == 4 }
-    end
-
-    def as_query( options )
-      {
-        query: api_key_option.merge(options)
-      }
     end
   end
 end

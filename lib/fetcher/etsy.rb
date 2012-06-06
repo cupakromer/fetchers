@@ -20,17 +20,14 @@ module Fetcher
     )
 
     def fetch
-      most_recent_items = http_request(ACTIVE_LISTINGS_URI, options)["results"]
+      most_recent_items = http_request(ACTIVE_LISTINGS_URI,
+                                       wrap_query_options(options))["results"]
 
       @data = format_items most_recent_items
     end
 
     private
     def options
-      { query: generate_query }
-    end
-
-    def generate_query
       {
         api_key:  api_key,
         keywords: @cue.split(/\s/).join(','),

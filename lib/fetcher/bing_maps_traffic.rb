@@ -35,13 +35,7 @@ module Fetcher
     end
 
     def traffic_options
-      as_query severity: 4, o: "json"
-    end
-
-    def as_query( options )
-      {
-        query: api_key_option.merge(options)
-      }
+      wrap_query_options api_key_option.merge severity: 4, o: "json"
     end
 
     def count_severe_incidents( response_body )
