@@ -39,11 +39,11 @@ module Fetcher
     end
 
     def count_severe_incidents( response_body )
-      get_incidents(response_body).count{ |incident| incident["severity"] == 4 }
+      get_incidents(response_body).count{ |incident| incident[:severity] == 4 }
     end
 
     def get_incidents( incident_response_body )
-      incident_response_body["resourceSets"][0]["resources"]
+      incident_response_body[:resourceSets][0][:resources]
     end
   end
 end

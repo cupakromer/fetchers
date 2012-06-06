@@ -1,8 +1,17 @@
 require 'httparty'
 
 module Fetcher
+  class SymbolizedParser < HTTParty::Parser
+    def json
+      MultiJson.decode body, symbolize_keys: true
+    end
+  end
+
   class Base
     include HTTParty
+
+    parser SymbolizedParser
+
     attr_reader :message, :data
 
     def initialize(cue)

@@ -11,7 +11,7 @@ module Fetcher
 
     ACTIVE_LISTINGS_URI = "/listings/active"
 
-    LISTING_FIELDS = %w[title price currency_code url ending_tsz].freeze
+    LISTING_FIELDS = [:title, :price, :currency_code, :url, :ending_tsz].freeze
 
     default_params(
       limit:      5,
@@ -21,7 +21,7 @@ module Fetcher
 
     def fetch
       most_recent_items = http_request(ACTIVE_LISTINGS_URI,
-                                       wrap_query_options(options))["results"]
+                                       wrap_query_options(options))[:results]
 
       @data = format_items most_recent_items
     end

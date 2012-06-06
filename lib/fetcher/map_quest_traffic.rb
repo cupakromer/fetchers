@@ -41,7 +41,7 @@ module Fetcher
     end
 
     def count_sever_incidents( response_body )
-        response_body["incidents"].count{ |incident| incident["severity"] == 4 }
+        response_body[:incidents].count{ |incident| incident[:severity] == 4 }
     end
   end
 end

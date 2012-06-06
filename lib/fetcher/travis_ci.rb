@@ -5,7 +5,7 @@ module Fetcher
 
     def fetch
       @data = http_request("/#{@cue.owner}/#{@cue.name}/builds.json") do |builds|
-        most_recent_build = builds.max_by{|b| b["started_at"]}
+        most_recent_build = builds.max_by{|b| b[:started_at]}
       end
     end
   end
