@@ -5,12 +5,16 @@ module Fetcher
     base_uri "vimeo.com/api/v2/channel"
     format :json
 
-    def fetch
-      most_recent = http_request("/#{@cue}/videos.json") do |videos|
-        videos.max_by{|v| v["upload_date"]}
-      end
+    fetcher do |videos|
+      videos.max_by{|v| v["upload_date"]}
+    end
 
-      generate_data_hash most_recent
+    def uri
+      "/#{@cue}/videos.json"
+    end
+
+    def after_fetch(most_recent)
+      generate_data_hash(most_recent)
     end
 
     private
