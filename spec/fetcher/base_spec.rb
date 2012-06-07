@@ -25,12 +25,6 @@ module Fetcher
       end
     end
 
-    describe "#fetch" do
-      it "raises a 'Must be implemented by child class' error" do
-        expect{ base.fetch }.to raise_error "Must be implemented by child class"
-      end
-    end
-
     describe "#http_request" do
       # Normally private methods are not tested. However, since this method is
       # such a work-horse for the class, it needs to be tested.
