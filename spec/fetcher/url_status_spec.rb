@@ -38,6 +38,11 @@ module Fetcher
       end
     end
 
-    it "times out after 30 seconds"
+    it "times out after 30 seconds" do
+      stub_request(:get, ANY_VALID_URL)
+
+      urlstatus.should_receive(:http_request).with(ANY_VALID_URL, timeout: 30)
+      urlstatus.fetch
+    end
   end
 end
