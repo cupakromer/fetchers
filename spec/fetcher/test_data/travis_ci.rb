@@ -2,7 +2,7 @@ require 'json'
 
 module Fetcher
   module TestData
-    class TravisCI
+    module TravisCI
       JSON_DATA = File.read("#{File.dirname __FILE__}/travis_ci.json").freeze
 
       EXPECTED_DATA = {

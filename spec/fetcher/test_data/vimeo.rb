@@ -2,7 +2,7 @@ require 'json'
 
 module Fetcher
   module TestData
-    class Vimeo
+    module Vimeo
       JSON_DATA = File.read("#{File.dirname __FILE__}/vimeo.json").freeze
 
       EXPECTED_DATA = {
