@@ -5,11 +5,8 @@ module Fetcher
     include APIKey
 
     api_key_param_name :api_key
-
     base_uri "openapi.etsy.com/v2"
     format :json
-
-    ACTIVE_LISTINGS_URI = "/listings/active"
 
     LISTING_FIELDS = [:title, :price, :currency_code, :url, :ending_tsz].freeze
 
@@ -17,31 +14,29 @@ module Fetcher
       limit:      5,
       sort_on:    "created",
       sort_order: "down",
+      fields:     LISTING_FIELDS.join(',')
     )
 
-    def fetch
-      most_recent_items = http_request(ACTIVE_LISTINGS_URI,
-                                       wrap_query_options(options))[:results]
+    def uri
+      "/listings/active"
+    end
 
-      @data = format_items most_recent_items
+    def process_response( items )
+      format_items items[:results]
     end
 
     private
     def options
-      {
-        api_key:  api_key,
-        keywords: @cue.split(/\s/).join(','),
-        fields:   LISTING_FIELDS.join(','),
-      }
+      wrap_query_options api_key_option.merge keywords: @cue.split(/\s/).join(',')
     end
 
-    def format_items(data)
+    def format_items( data )
       data.map{ |item| extract_desired_fields item }
     end
 
-    def extract_desired_fields(item_data)
+    def extract_desired_fields( item_data )
       LISTING_FIELDS.each_with_object({}) do |field, data|
-        data[field.to_sym] = item_data[field]
+        data[field] = item_data[field]
       end
     end
   end
