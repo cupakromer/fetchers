@@ -2,7 +2,7 @@ require 'json'
 
 module Fetcher
   module TestData
-    class BingMapsTraffic
+    module BingMapsTraffic
 
       def self.data_with_0_severe_incidents
         TRAFFIC_DATA.dup
@@ -24,20 +24,18 @@ module Fetcher
         data
       end
 
-      BOUNDING_BOX = [
-        38.75956821688915,
-        -77.3123837106838,
-        39.04903178311085,
-        -76.9404162893162
-      ].freeze
-
       ZIP_DATA = {
         "resourceSets" => [
           {
             "estimatedTotal" => 1,
             "resources" => [
               {
-                "bbox" => BOUNDING_BOX,
+                "bbox" => [
+                  38.75956821688915,
+                  -77.3123837106838,
+                  39.04903178311085,
+                  -76.9404162893162
+                ],
                 "name" => "United States",
                 "point" => {
                   "type" => "Point",
