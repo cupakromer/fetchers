@@ -1,91 +1,29 @@
 require 'spec_helper'
 require_relative 'test_data/map_quest_traffic'
-require 'json'
+require_relative 'test_data/geocode'
 
 module Fetcher
   describe MapQuestTraffic do
     describe "#fetch" do
-      before(:each) do
-        @api_key = "arandomkey"
-        @location_url = "http://www.mapquestapi.com/geocoding/v1/address"
-        @traffic_url  = "http://www.mapquestapi.com/traffic/v1/incidents"
 
-        @params = {
-          key: @api_key,
-        }
-        @geocode_data = <<DATA
-{
-   "results" : [
-      {
-         "formatted_address" : "US City, Some place, USA",
-         "geometry" : {
-            "bounds" : {
-               "northeast" : {
-                  "lat" : 39.04903178311085,
-                  "lng" : -76.9404162893162
-               },
-               "southwest" : {
-                  "lat" : 38.75956821688915,
-                  "lng" : -77.3123837106838
-               }
-            }
-         },
-         "types" : [ "postal_code" ]
-      }
-   ],
-   "status" : "OK"
-}
-DATA
-        @geocode_address_data = <<DATA
-{
-   "results" : [
-      {
-         "address_components" : [
-            {
-               "long_name" : "10",
-               "short_name" : "10",
-               "types" : [ "street_number" ]
-            },
-            {
-               "long_name" : "Any Street",
-               "short_name" : "Any Street",
-               "types" : [ "route" ]
-            },
-            {
-               "long_name" : "A City",
-               "short_name" : "A City",
-               "types" : [ "locality", "political" ]
-            },
-            {
-               "long_name" : "10000",
-               "short_name" : "10000",
-               "types" : [ "postal_code" ]
-            }
-         ],
-         "formatted_address" : "10 Any Street, A City, 10000",
-         "geometry" : {
-            "location" : {
-               "lat" : 10,
-               "lng" : -10
-            },
-            "location_type" : "ROOFTOP",
-            "viewport" : {
-               "northeast" : {
-                  "lat" : 10,
-                  "lng" : -10
-               },
-               "southwest" : {
-                  "lat" : 10,
-                  "lng" : -10
-               }
-            }
-         },
-         "types" : [ "street_address" ]
-      }
-   ],
-   "status" : "OK"
-}
-DATA
+      before(:each) do
+        MapQuestTraffic.api_key = api_key
+      end
+
+      let( :api_key ) { "arandomkey".freeze }
+      let( :params  ) {{
+        key:         api_key,
+        boundingBox: "39.04903178311085,-77.3123837106838," \
+                     "38.75956821688915,-76.9404162893162",
+        filters:     :incidents,
+        outFormat:   :json
+      }.freeze }
+
+      def stub_incident_data( incident_count )
+        data = TestData::MapQuestTraffic.send "data_with_#{incident_count}_severe_incidents"
+        url = "http://www.mapquestapi.com/traffic/v1/incidents"
+
+        stub_request(:get, url).with(query: params).to_return(body: data)
       end
 
       [
@@ -95,21 +33,12 @@ DATA
       ].each do |zip_code, count|
         it "#{zip_code} returns a count of #{count} severe traffic incidents" do
 
-          stub_request(:get,
-          "http://maps.googleapis.com/maps/api/geocode/json").
-            with(query: {address: zip_code, language: :en, sensor: :false}).
-            to_return(body: @geocode_data)
+          TestData::Geocode.stub_request(self, zip_code) do
+            TestData::Geocode::ZIP_DATA
+          end
 
-          stub_request(:get, @traffic_url).
-            with(query: {
-              key: @api_key,
-              boundingBox: TestData::MapQuestTraffic::BOUNDING_BOX.join(','),
-              filters: :incidents,
-              outFormat: :json
-            }).
-            to_return(body: JSON.generate(TestData::MapQuestTraffic.send "data_with_#{count}_severe_incidents"))
+          stub_incident_data count
 
-          MapQuestTraffic.api_key = @api_key
           map_quest = MapQuestTraffic.new zip_code
 
           map_quest.fetch.should == count
@@ -123,26 +52,16 @@ DATA
       ].each do |address|
         it "#{address} returns a count of 1 severe traffic incidents" do
 
-          stub_request(:get,
-          "http://maps.googleapis.com/maps/api/geocode/json").
-            with(query: {address: address, language: :en, sensor: :false}).
-            to_return(body: @geocode_address_data)
+          TestData::Geocode.stub_request(self, address) do
+            TestData::Geocode::ADDRESS_DATA
+          end
 
-          stub_request(:get,
-          "http://maps.googleapis.com/maps/api/geocode/json").
-            with(query: {address: 10000, language: :en, sensor: :false}).
-            to_return(body: @geocode_data)
+          TestData::Geocode.stub_request(self, 10000) do
+            TestData::Geocode::ZIP_DATA
+          end
 
-          stub_request(:get, @traffic_url).
-            with(query: {
-              key: @api_key,
-              boundingBox: TestData::MapQuestTraffic::BOUNDING_BOX.join(','),
-              filters: :incidents,
-              outFormat: :json
-            }).
-            to_return(body: JSON.generate(TestData::MapQuestTraffic.send "data_with_1_severe_incidents"))
+          stub_incident_data 1
 
-          MapQuestTraffic.api_key = @api_key
           map_quest = MapQuestTraffic.new address
 
           map_quest.fetch.should == 1
