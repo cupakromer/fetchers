@@ -24,14 +24,11 @@ module Fetcher
         [21201, 5],
       ].each do |zip_code, count|
         it "#{zip_code} returns a count of #{count} severe traffic incidents" do
+          TestData::Geocode.stub_request(self, zip_code) do
+            TestData::Geocode::ZIP_DATA
+          end
 
-          stub_request(:get,
-          "http://maps.googleapis.com/maps/api/geocode/json").
-            with(query: {address: zip_code, language: :en, sensor: :false}).
-            to_return(body: TestData::Geocode::ZIP_DATA)
-
-          stub_request(:get, traffic_url).
-            with(query: params).
+          stub_request(:get, traffic_url).with(query: params).
             to_return(body: JSON.generate(TestData::BingMapsTraffic.send "data_with_#{count}_severe_incidents"))
 
           bing_maps = BingMapsTraffic.new zip_code
@@ -47,18 +44,15 @@ module Fetcher
       ].each do |address|
         it "#{address} returns a count of 1 severe traffic incidents" do
 
-          stub_request(:get,
-          "http://maps.googleapis.com/maps/api/geocode/json").
-            with(query: {address: address, language: :en, sensor: :false}).
-            to_return(body: TestData::Geocode::ADDRESS_DATA)
+          TestData::Geocode.stub_request(self, address) do
+            TestData::Geocode::ADDRESS_DATA
+          end
 
-          stub_request(:get,
-          "http://maps.googleapis.com/maps/api/geocode/json").
-            with(query: {address: 10000, language: :en, sensor: :false}).
-            to_return(body: TestData::Geocode::ZIP_DATA)
+          TestData::Geocode.stub_request(self, 10000) do
+            TestData::Geocode::ZIP_DATA
+          end
 
-          stub_request(:get, traffic_url).
-            with(query: params).
+          stub_request(:get, traffic_url).with(query: params).
             to_return(body: JSON.generate(TestData::BingMapsTraffic.send "data_with_1_severe_incidents"))
 
           bing_maps = BingMapsTraffic.new address
