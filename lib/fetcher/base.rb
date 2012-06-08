@@ -24,10 +24,22 @@ module Fetcher
       last_request_status
     end
 
-    def fetch
-      # TODO: See Exceptional Ruby pg. 67, #fetch is a standard method on
-      # collection classes
+    def after_fetch
       fail "Must be implemented by child class"
+    end
+
+    def uri
+      fail "Must define uri"
+    end
+
+    def self.fetcher(options = {}, &block)
+      define_method('fetch') do
+        result = http_request(uri) do |data|
+          block.call(data)
+        end
+
+        after_fetch(result)
+      end
     end
 
     private
