@@ -1,5 +1,4 @@
 require 'spec_helper'
-require 'json'
 require_relative 'test_data/bing_maps_traffic'
 require_relative 'test_data/geocode'
 
@@ -11,12 +10,18 @@ module Fetcher
       end
 
       let( :api_key      ) { "arandomkey".freeze }
-      let( :traffic_url  ) { "http://dev.virtualearth.net/REST/v1/Traffic/Incidents/38.75956821688915,-77.3123837106838,39.04903178311085,-76.9404162893162".freeze }
       let( :params       ) {{
           key:      api_key,
           severity: 4,
           o:        "json",
       }.freeze }
+
+      def stub_incident_data( incident_count )
+        data = TestData::BingMapsTraffic.send "data_with_#{incident_count}_severe_incidents"
+        url = "http://dev.virtualearth.net/REST/v1/Traffic/Incidents/38.75956821688915,-77.3123837106838,39.04903178311085,-76.9404162893162"
+
+        stub_request(:get, url).with(query: params).to_return(body: data)
+      end
 
       [
         [22102, 0],
@@ -28,8 +33,7 @@ module Fetcher
             TestData::Geocode::ZIP_DATA
           end
 
-          stub_request(:get, traffic_url).with(query: params).
-            to_return(body: JSON.generate(TestData::BingMapsTraffic.send "data_with_#{count}_severe_incidents"))
+          stub_incident_data count
 
           bing_maps = BingMapsTraffic.new zip_code
 
@@ -52,8 +56,7 @@ module Fetcher
             TestData::Geocode::ZIP_DATA
           end
 
-          stub_request(:get, traffic_url).with(query: params).
-            to_return(body: JSON.generate(TestData::BingMapsTraffic.send "data_with_1_severe_incidents"))
+          stub_incident_data 1
 
           bing_maps = BingMapsTraffic.new address
 
