@@ -24,21 +24,21 @@ module Fetcher
       last_request_status
     end
 
-    def after_fetch
-      fail "Must be implemented by child class"
-    end
-
     def uri
-      fail "Must define uri"
+      @cue
     end
 
-    def self.fetcher(options = {}, &block)
-      define_method('fetch') do
-        result = http_request(uri) do |data|
-          block.call(data)
-        end
+    def options
+      {}
+    end
 
-        after_fetch(result)
+    def process_response( reponse_data )
+      response_data
+    end
+
+    def fetch
+      @data = http_request(uri, options) do |response_data|
+        process_response response_data
       end
     end
 
