@@ -1,4 +1,5 @@
 require 'spec_helper'
+require 'ostruct'
 require_relative 'test_data/travis_ci'
 
 module Fetcher
@@ -11,8 +12,7 @@ module Fetcher
       end
 
       let( :travis_ci_project ) {
-        Project = Struct.new :owner, :name
-        TravisCI.new Project.new("owner_name", "name")
+        TravisCI.new OpenStruct.new owner: "owner_name", name: "name"
       }
 
       it "returns data about the most recent build" do

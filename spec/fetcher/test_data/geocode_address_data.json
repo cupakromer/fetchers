@@ -1,0 +1,48 @@
+{
+   "results" : [
+      {
+         "address_components" : [
+            {
+               "long_name" : "10",
+               "short_name" : "10",
+               "types" : [ "street_number" ]
+            },
+            {
+               "long_name" : "Any Street",
+               "short_name" : "Any Street",
+               "types" : [ "route" ]
+            },
+            {
+               "long_name" : "A City",
+               "short_name" : "A City",
+               "types" : [ "locality", "political" ]
+            },
+            {
+               "long_name" : "10000",
+               "short_name" : "10000",
+               "types" : [ "postal_code" ]
+            }
+         ],
+         "formatted_address" : "10 Any Street, A City, 10000",
+         "geometry" : {
+            "location" : {
+               "lat" : 10,
+               "lng" : -10
+            },
+            "location_type" : "ROOFTOP",
+            "viewport" : {
+               "northeast" : {
+                  "lat" : 10,
+                  "lng" : -10
+               },
+               "southwest" : {
+                  "lat" : 10,
+                  "lng" : -10
+               }
+            }
+         },
+         "types" : [ "street_address" ]
+      }
+   ],
+   "status" : "OK"
+}
