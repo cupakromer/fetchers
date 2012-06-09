@@ -17,12 +17,10 @@ module Fetcher
       fields:     LISTING_FIELDS.join(',')
     )
 
+    add_fetcher_options after: :format_items
+
     def uri
       "/listings/active"
-    end
-
-    def process_response( items )
-      format_items items[:results]
     end
 
     private
@@ -30,8 +28,8 @@ module Fetcher
       wrap_query_options api_key_option.merge keywords: @cue.split(/\s/).join(',')
     end
 
-    def format_items( data )
-      data.map{ |item| extract_desired_fields item }
+    def format_items
+      @data[:results].map{ |item| extract_desired_fields item }
     end
 
     def extract_desired_fields( item_data )

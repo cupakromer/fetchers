@@ -65,11 +65,11 @@ module Fetcher
     end
 
     def fetcher_options
-      self.class.fetcher_options ||= {}
+      self.class.fetcher_options || {}
     end
 
     def fetcher_filters
-      self.class.fetcher_filters ||= []
+      self.class.fetcher_filters || []
     end
 
     attr_reader :last_request_status
