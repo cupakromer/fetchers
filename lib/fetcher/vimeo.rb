@@ -7,27 +7,25 @@ module Fetcher
 
     MostRecentVideo = lambda{ |videos| videos.max_by{ |v| v[:upload_date] } }
 
+    add_fetcher_options after: :generate_hash
+    add_fetcher_filters MostRecentVideo
+
     def uri
       "/#{@cue}/videos.json"
-    end
-
-    def process_response( videos )
-      @video = MostRecentVideo.call videos
-      generate_hash
     end
 
     private
     def generate_hash
       {
-        title:        @video[:title],
-        url:          @video[:url],
-        description:  @video[:description],
-        date:         @video[:upload_date],
-        user:         @video[:user_name],
-        number_likes: @video[:stats_number_of_likes],
-        number_plays: @video[:stats_number_of_plays],
-        duration:     @video[:duration],
-        tags:         @video[:tags]
+        title:        @data[:title],
+        url:          @data[:url],
+        description:  @data[:description],
+        date:         @data[:upload_date],
+        user:         @data[:user_name],
+        number_likes: @data[:stats_number_of_likes],
+        number_plays: @data[:stats_number_of_plays],
+        duration:     @data[:duration],
+        tags:         @data[:tags]
       }
     end
   end

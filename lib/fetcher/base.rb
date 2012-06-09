@@ -37,12 +37,41 @@ module Fetcher
     end
 
     def fetch
-      @data = http_request(uri, options) do |response_data|
-        process_response response_data
-      end
+      send(fetcher_options[:before]) if fetcher_options[:before]
+
+      @data = http_request(uri, options) { |response_data|
+        fetcher_filters.inject(response_data) { |data, filter|
+          filter.call data
+        }
+      }
+
+      @data = fetcher_options[:after] ? send(fetcher_options[:after]) : @data
     end
 
     private
+    class << self
+      attr_reader :fetcher_options
+      attr_reader :fetcher_filters
+    end
+
+    def self.add_fetcher_options( methods )
+      @fetcher_options ||= {}
+      @fetcher_options.merge! methods
+    end
+
+    def self.add_fetcher_filters( *filters )
+      @fetcher_filters ||= []
+      @fetcher_filters += filters
+    end
+
+    def fetcher_options
+      self.class.fetcher_options ||= {}
+    end
+
+    def fetcher_filters
+      self.class.fetcher_filters ||= []
+    end
+
     attr_reader :last_request_status
 
     def http_request(url, options = {})
