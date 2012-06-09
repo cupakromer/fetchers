@@ -13,17 +13,13 @@ module Fetcher
     base_uri "http://www.mapquestapi.com/traffic/v1"
     format :json
 
-    def fetch
-      @data = http_request(traffic_incident_uri, traffic_options) do |data|
-        count_sever_incidents data
-      end
-    end
+    add_fetcher_options after: :count_severe_incidents
 
-    private
-    def traffic_incident_uri
+    def uri
       TRAFFIC_INCIDENTS_URI
     end
 
+    private
     def zip_geocode_data
       results = Geocoder.search(@cue)[0]
       results.is_zip? ? results : Geocoder.search(results.extract_zip)[0]
@@ -33,15 +29,15 @@ module Fetcher
       zip_geocode_data.bounding_box(order).join(',')
     end
 
-    def traffic_options
+    def options
       order = [:north_lat, :west_lng, :south_lat, :east_lng]
       wrap_query_options api_key_option.merge boundingBox: bounding_box(order),
                                               filters:     :incidents,
                                               outFormat:   :json
     end
 
-    def count_sever_incidents( response_body )
-        response_body[:incidents].count{ |incident| incident[:severity] == 4 }
+    def count_severe_incidents
+        @data[:incidents].count{ |incident| incident[:severity] == 4 }
     end
   end
 end

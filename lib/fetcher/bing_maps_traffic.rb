@@ -13,14 +13,10 @@ module Fetcher
     base_uri "http://dev.virtualearth.net/REST/v1"
     format :json
 
-    def fetch
-      @data = http_request(traffic_incident_uri, traffic_options) do |data|
-        count_severe_incidents data
-      end
-    end
+    add_fetcher_options after: :count_severe_incidents
 
     private
-    def traffic_incident_uri
+    def uri
       order = [:south_lat, :west_lng, :north_lat, :east_lng]
       TRAFFIC_INCIDENTS_URI + "/#{bounding_box order}"
     end
@@ -34,12 +30,12 @@ module Fetcher
       results.is_zip? ? results : Geocoder.search(results.extract_zip)[0]
     end
 
-    def traffic_options
+    def options
       wrap_query_options api_key_option.merge severity: 4, o: "json"
     end
 
-    def count_severe_incidents( response_body )
-      get_incidents(response_body).count{ |incident| incident[:severity] == 4 }
+    def count_severe_incidents
+      get_incidents(@data).count{ |incident| incident[:severity] == 4 }
     end
 
     def get_incidents( incident_response_body )
