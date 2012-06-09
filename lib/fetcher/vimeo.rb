@@ -5,7 +5,7 @@ module Fetcher
     format :json
     base_uri "vimeo.com/api/v2/channel"
 
-    MostRecentVideo = lambda{ |videos| videos.max_by{ |v| v[:upload_date] } }
+    MostRecentVideo = ->(videos){ videos.max_by{ |v| v[:upload_date] } }
 
     add_fetcher_options after: :generate_hash
     add_fetcher_filters MostRecentVideo
