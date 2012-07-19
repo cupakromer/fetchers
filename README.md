@@ -1,10 +1,7 @@
 Web API Fetchers Project
 ========================
 
-[![Build
-Status](https://secure.travis-ci.org/cupakromer/fetchers.png?branch=master)](http://travis-ci.org/cupakromer/fetchers)
-[![Build
-Status](https://secure.travis-ci.org/cupakromer/fetchers.png?branch=develop)](http://travis-ci.org/cupakromer/fetchers)
+[![Build Status](https://secure.travis-ci.org/cupakromer/fetchers.png?branch=master)](http://travis-ci.org/cupakromer/fetchers) [![Dependency Status](https://gemnasium.com/cupakromer/fetchers.png?travis)](https://gemnasium.com/cupakromer/fetchers) [![Code Climate](https://codeclimate.com/badge.png)](https://codeclimate.com/github/cupakromer/fetchers)
 
 
 Tasks
